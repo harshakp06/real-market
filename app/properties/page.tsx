@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Client, Databases, Query } from 'appwrite';
+import { useState, useEffect, useCallback } from 'react';
+import { Client, Databases, Query } from 'node-appwrite';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const client = new Client()
   .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
@@ -32,11 +33,7 @@ export default function PropertiesPage() {
     bedrooms: '',
   });
 
-  useEffect(() => {
-    fetchProperties();
-  }, [filters]);
-
-  const fetchProperties = async () => {
+  const fetchProperties = useCallback(async () => {
     try {
       const queries: string[] = [];
 
@@ -59,15 +56,19 @@ export default function PropertiesPage() {
         queries
       );
 
-      setProperties(response.documents as Property[]);
+      setProperties(response.documents as unknown as Property[]);
     } catch (error) {
       console.error('Error fetching properties:', error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters]);
 
-  const handleFilterChange = (e: React.ChangeEvent<HTMLSelectInput>) => {
+  useEffect(() => {
+    fetchProperties();
+  }, [fetchProperties]);
+
+  const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
   };
@@ -137,11 +138,14 @@ export default function PropertiesPage() {
             key={property.$id}
             className="bg-white rounded-lg shadow-md overflow-hidden"
           >
-            <img
-              src={property.imageUrl}
-              alt={property.title}
-              className="w-full h-48 object-cover"
-            />
+            <div className="relative w-full h-48">
+              <Image
+                src={property.imageUrl}
+                alt={property.title}
+                fill
+                className="object-cover"
+              />
+            </div>
             <div className="p-6">
               <h3 className="text-xl font-semibold mb-2">{property.title}</h3>
               <p className="text-gray-600 mb-4">{property.location}</p>

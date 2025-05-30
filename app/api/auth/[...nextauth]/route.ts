@@ -1,6 +1,6 @@
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { Client, Account } from 'appwrite';
+import { Client, Account } from 'node-appwrite';
 
 declare module 'next-auth' {
   interface Session {
@@ -37,6 +37,10 @@ const handler = NextAuth({
             credentials.email,
             credentials.password
           );
+
+          if (!session) {
+            return null;
+          }
 
           const user = await account.get();
 

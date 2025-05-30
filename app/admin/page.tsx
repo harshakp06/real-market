@@ -12,10 +12,23 @@ const client = new Client()
 const databases = new Databases(client);
 const storage = new Storage(client);
 
+interface Property {
+  $id: string;
+  title: string;
+  location: string;
+  price: number;
+  type: string;
+  bedrooms: number;
+  bathrooms: number;
+  area: number;
+  description: string;
+  imageUrl: string;
+}
+
 export default function AdminPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const [properties, setProperties] = useState([]);
+  const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
     title: '',
@@ -290,7 +303,7 @@ export default function AdminPage() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {properties.map((property: any) => (
+              {properties.map((property: Property) => (
                 <tr key={property.$id}>
                   <td className="px-6 py-4 whitespace-nowrap">
                     {property.title}
