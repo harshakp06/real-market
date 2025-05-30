@@ -4,7 +4,7 @@ import { SessionProvider } from 'next-auth/react';
 import { Metadata } from 'next';
 import './globals.css';
 import Navbar from './components/Navbar';
-import Footer from './components/Footer.tsx';
+import Footer from './components/Footer';
 
 const inter = Inter({ subsets: ['latin'] });
 

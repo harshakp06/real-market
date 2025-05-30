@@ -2,6 +2,17 @@ import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { Client, Account } from 'appwrite';
 
+declare module 'next-auth' {
+  interface Session {
+    user: {
+      id?: string;
+      name?: string | null;
+      email?: string | null;
+      image?: string | null;
+    }
+  }
+}
+
 const client = new Client()
   .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
   .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID!);
@@ -22,7 +33,7 @@ const handler = NextAuth({
             return null;
           }
 
-          const session = await account.createEmailSession(
+          const session = await account.createSession(
             credentials.email,
             credentials.password
           );
