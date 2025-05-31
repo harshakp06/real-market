@@ -1,4 +1,4 @@
-import { Client, Databases, Storage } from 'appwrite';
+import { Client, Databases, Storage } from 'node-appwrite';
 import dotenv from 'dotenv';
 
 dotenv.config({ path: '.env.local' });

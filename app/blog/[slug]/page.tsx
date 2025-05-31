@@ -1,4 +1,4 @@
-import { Client, Databases, Query } from 'appwrite';
+import { Client, Databases, Query } from 'node-appwrite';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import Script from 'next/script';

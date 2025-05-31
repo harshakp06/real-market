@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { Client, Databases, Storage } from 'appwrite';
+import { Client, Databases, Storage } from 'node-appwrite';
 import { useRouter } from 'next/navigation';
 
 const client = new Client()
@@ -58,7 +58,7 @@ export default function AdminPage() {
         process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!,
         'properties'
       );
-      setProperties(response.documents);
+      setProperties(response.documents as unknown as Property[]);
     } catch (error) {
       console.error('Error fetching properties:', error);
     } finally {

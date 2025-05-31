@@ -1,33 +1,33 @@
 import Link from 'next/link';
-import Image from 'next/image';
-import { Client, Databases } from 'appwrite';
+import { Client, Databases, Query, Models } from 'node-appwrite';
+import PropertiesList from './components/PropertiesList';
 
-interface Property {
-  $id: string;
+interface Property extends Models.Document {
   title: string;
   location: string;
   price: number;
-  imageUrl: string;
+  imageurl: string;
+  description: string;
 }
 
 const client = new Client()
-  .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
-  .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID!);
+  .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT || '')
+  .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID || '')
+  .setKey(process.env.APPWRITE_API_KEY || '');
 
 const databases = new Databases(client);
 
-async function getFeaturedProperties() {
+async function getFeaturedProperties(): Promise<Property[]> {
   try {
     const response = await databases.listDocuments(
-      process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!,
+      process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID || '',
       'properties',
       [
-        // Query to get featured properties
-        // Limit to 6 properties
-        // Order by creation date
+        Query.limit(6),
+        Query.orderDesc('$createdAt')
       ]
     );
-    return response.documents;
+    return response.documents as Property[];
   } catch (error) {
     console.error('Error fetching properties:', error);
     return [];
@@ -63,38 +63,7 @@ export default async function Home() {
           <h2 className="text-3xl font-bold text-gray-900 mb-8">
             Featured Properties
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {properties.map((property: Property) => (
-              <div
-                key={property.$id}
-                className="bg-white rounded-lg shadow-md overflow-hidden"
-              >
-                <div className="relative w-full h-48">
-                  <Image
-                    src={property.imageUrl}
-                    alt={property.title}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-semibold mb-2">{property.title}</h3>
-                  <p className="text-gray-600 mb-4">{property.location}</p>
-                  <div className="flex justify-between items-center">
-                    <span className="text-2xl font-bold text-blue-600">
-                      ${property.price.toLocaleString()}
-                    </span>
-                    <Link
-                      href={`/properties/${property.$id}`}
-                      className="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded-md text-sm font-medium"
-                    >
-                      View Details
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+          <PropertiesList properties={properties} />
         </div>
       </section>
 

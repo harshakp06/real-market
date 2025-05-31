@@ -1,4 +1,4 @@
-import { Client, Databases } from 'appwrite';
+import { Client, Databases } from 'node-appwrite';
 import { MetadataRoute } from 'next';
 
 const client = new Client()
